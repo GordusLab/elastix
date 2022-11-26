@@ -646,9 +646,19 @@ ElastixTemplate<TFixedImage, TMovingImage>::AfterEachIteration()
 
   /** Create a TransformParameter-file for the current iteration. */
   bool writeTansformParametersThisIteration = false;
+  int writeTansformParametersThisIterationInterval = 0;
+  int maximumNumberOfIterations = 500;
+
   this->GetConfiguration()->ReadParameter(
-    writeTansformParametersThisIteration, "WriteTransformParametersEachIteration", 0, false);
-  if (writeTansformParametersThisIteration)
+      maximumNumberOfIterations, "MaximumNumberOfIterations", 0, false);
+  this->GetConfiguration()->ReadParameter(
+      writeTansformParametersThisIteration, "WriteTransformParametersEachIteration", 0, false);
+  this->GetConfiguration()->ReadParameter(
+      writeTansformParametersThisIterationInterval, "WriteTransformParametersEachIterationInterval", 0, false);
+
+  if (writeTansformParametersThisIteration || ((this->m_IterationCounter % 
+    writeTansformParametersThisIterationInterval) == 0 && writeTansformParametersThisIterationInterval >= 1) || ((this->m_IterationCounter % 
+    writeTansformParametersThisIterationInterval) == (maximumNumberOfIterations-1) && writeTansformParametersThisIterationInterval >= 1))
   {
     /** Add zeros to the number of iterations, to make sure
      * it always consists of 7 digits.
